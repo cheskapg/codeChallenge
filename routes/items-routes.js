@@ -1,4 +1,4 @@
-import { getItemsOptions, getItemOptions } from "../interface/items-interface.js";
+import { getItemsOptions, getItemOptions } from "../schemas/items-schema.js";
 function itemRoutes(fastify, options, done) {
   //get syntax (endpoint, options, handler)
 
