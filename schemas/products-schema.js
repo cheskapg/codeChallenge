@@ -1,5 +1,12 @@
-// src/schemas/products-schema.js
-const Product = {
+// schema validation
+
+import {
+    getItemsController,
+    getItemController,
+    addItemController,
+    updateItemController,
+    softDeleteItemController,
+  } from "../controllers/items-controller.js";const Product = {
     type: "object",
     properties: {
       id: { type: "integer" },
