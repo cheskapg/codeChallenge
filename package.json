@@ -4,5 +4,9 @@
   "type": "module",
   "scripts": {
     "start": "node server.js"
+  },
+  "dependencies": {
+    "fastify": "^5.2.2"
   }
 }
+
