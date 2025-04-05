@@ -4,6 +4,7 @@ import Fastify from "fastify";
 import itemRoutes from "./routes/items-routes.js";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
+import customerRoutes from "./routes/customers-routes.js";
 const PORT = process.env.PORT || 3000;
 const fastify = Fastify();
 
@@ -33,7 +34,7 @@ const swaggerUiOptions = {
 await fastify.register(fastifySwagger, swaggerOptions); // register the swagger plugin
 await fastify.register(fastifySwaggerUI, swaggerUiOptions);
 await fastify.register(itemRoutes); // register the routes similar to module importing controllers etc in nestjs
-
+await fastify.register(customerRoutes); // register the routes similar to module importing controllers etc in nestjs
 fastify.get("/", async (req, reply) => {
   return { hello: "esm world" };
 });
