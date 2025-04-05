@@ -41,9 +41,9 @@ await fastify.register(customerRoutes); //
 await fastify.register(salesRoutes); //
 fastify.register(productRoutes); //
 
-fastify.get("/", async (req, reply) => {
-  return { hello: "esm world" };
-});
+// fastify.get("/", async (req, reply) => {
+//   return { hello: "esm world" };
+// });
 
 const start = async () => {
   try {

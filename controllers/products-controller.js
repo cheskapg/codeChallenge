@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import products from '../models/products.js';  // Assuming you have products data in a separate model
+import products from '../products.js';  // Assuming you have products data in a separate model
 
 // Get all products
 const getProductsController = (req, reply) => {
