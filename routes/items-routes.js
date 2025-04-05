@@ -1,15 +1,26 @@
-import { getItemsOptions, getItemOptions, postItemOptions } from "../schemas/items-schema.js";
-function itemRoutes(fastify, options, done) {
-  //get syntax (endpoint, options, handler)
+import { 
+  getItemsOptions, 
+  getItemOptions, 
+  postItemOptions, 
+  updateItemOptions, 
+  softDeleteItemOptions 
+} from "../schemas/items-schema.js";
 
-  //get all items
+function itemRoutes(fastify, options, done) {
+  // Get all items
   fastify.get("/items", getItemsOptions);
 
-  //get item by id
-  fastify.get("/items/:id", getItemOptions);
+  // Get item by UUID
+  fastify.get("/items/:uuid", getItemOptions);
 
-  //post item
+  // Post a new item
   fastify.post("/item", postItemOptions);
+
+  // Update an existing item by UUID
+  fastify.put("/items/:uuid", updateItemOptions);
+
+  // Soft delete an item by UUID
+  fastify.delete("/items/:uuid", softDeleteItemOptions);
 
   done();
 }
