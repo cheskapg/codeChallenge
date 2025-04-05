@@ -9,7 +9,7 @@ const sales = [
     id: 1, // integer ID
     uuid: uuidv4(), // new UUID field
     customer_id: 1, // reference to customer UUID
-    date: "2025-04-05T14:00:00Z",
+    date: "2025-06-05T14:00:00Z",
     total_amount: 9.27,
   },
   {
