@@ -7,13 +7,13 @@ const getItemsController = (req, reply) => {
   reply.send(sale_items);
 };
 const getItemController = (req, reply) => {
-  const { id } = req.params;
-  const item = sale_items.find((item) => item.id === parseInt(id));
-  console.log(id);
+  const { uuid } = req.params;
+  const item = sale_items.find((item) => item.uuid === uuid);
+  console.log(uuid);
   if (!item) {
     return reply.code(404).send({ message: "Item not found" });
   }
-
+  delete item.id; // Remove deleted_at field if it exists
   reply.send(item);
 };
 const addItemController = (req, reply) => {
