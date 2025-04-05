@@ -1,0 +1,6 @@
+### GET all items
+GET http://localhost:3000/items
+Accept: application/json
+### GET a single item by ID
+GET http://localhost:3000/items/1
+Accept: application/json
