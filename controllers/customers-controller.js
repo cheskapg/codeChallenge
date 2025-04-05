@@ -1,5 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
+import customers from "../customers.js"; // Assuming the `customers` data is imported
+import sales from "../sales.js"; // Assuming the `sales` data is imported
 
 const getCustomersController = (req, reply) => {
   // Filter out soft-deleted customers
@@ -52,9 +53,9 @@ const updateCustomerController = (req, reply) => {
   const { name, email, phone, address } = req.body;
 
   // Validation checks
-  if (!name || !email || !phone || !address) {
-    return reply.code(400).send({ message: "Missing required fields" });
-  }
+//   if (!name || !email || !phone || !address) {
+//     return reply.code(400).send({ message: "Missing required fields" });
+//   }
 
   // Find the customer by UUID
   const customer = customers.find((customer) => customer.uuid === uuid);
@@ -63,11 +64,13 @@ const updateCustomerController = (req, reply) => {
   }
 
   // Update the customer
-  customer.name = name;
-  customer.email = email;
-  customer.phone = phone;
-  customer.address = address;
-  customer.updated_at = new Date().toISOString(); // Update the timestamp
+
+  // Only update fields if they're provided
+  if (name !== undefined) customer.name = name;
+  if (email !== undefined) customer.email = email;
+  if (phone !== undefined) customer.phone = phone;
+  if (address !== undefined) customer.address = address;
+
 
   // Respond with the updated customer
   reply.send(customer);

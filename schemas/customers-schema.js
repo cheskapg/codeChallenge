@@ -82,7 +82,7 @@ import {
       },
       body: {
         type: "object",
-        required: ["name", "email", "phone", "address"],
+        // required: ["name", "email", "phone", "address"],
         properties: {
           name: { type: "string" },
           email: { type: "string", format: "email" },
