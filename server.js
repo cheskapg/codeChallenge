@@ -5,6 +5,7 @@ import itemRoutes from "./routes/items-routes.js";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import customerRoutes from "./routes/customers-routes.js";
+import salesRoutes from "./routes/sales-routes.js";
 const PORT = process.env.PORT || 3000;
 const fastify = Fastify();
 
@@ -13,7 +14,8 @@ const swaggerOptions = {
     openapi: "3.0.0",
     info: {
       title: "🧀 Nacho-Sales API",
-      description: "A tasty Fastify-powered API serving up spicy sales data with extra cheese. 🔥🧀",
+      description:
+        "A tasty Fastify-powered API serving up spicy sales data with extra cheese. 🔥🧀",
       version: "1.0.0",
     },
     servers: [
@@ -33,8 +35,9 @@ const swaggerUiOptions = {
 // Register plugins
 await fastify.register(fastifySwagger, swaggerOptions); // register the swagger plugin
 await fastify.register(fastifySwaggerUI, swaggerUiOptions);
-await fastify.register(itemRoutes); // register the routes similar to module importing controllers etc in nestjs
-await fastify.register(customerRoutes); // register the routes similar to module importing controllers etc in nestjs
+await fastify.register(itemRoutes); //
+await fastify.register(customerRoutes); //
+await fastify.register(salesRoutes); //
 fastify.get("/", async (req, reply) => {
   return { hello: "esm world" };
 });
