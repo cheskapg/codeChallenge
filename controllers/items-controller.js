@@ -1,4 +1,4 @@
-//controller for items / handleer for items 
+//controller for items / handler for items 
 import items from "../items.js";
 
 const getItemsController = (req, reply) => {
