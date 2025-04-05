@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import sales from "../sales.js"; // Assuming the `sales` data is imported.
 
 const getItemsController = (req, reply) => {
-  reply.send(sale_items);
+  // Filter out soft-deleted customers
+  const getActiveItems = sale_items.filter((items) => !items.deleted_at);
+  reply.send(getActiveItems);
 };
 const getItemController = (req, reply) => {
   const { uuid } = req.params;
@@ -51,13 +53,8 @@ const addItemController = (req, reply) => {
 };
 // Update an existing sale item by UUID
 const updateItemController = (req, reply) => {
-  const { uuid } = req.params; // Use uuid for identification
+  const { uuid } = req.params;
   const { quantity, unit_price } = req.body;
-
-  // Validation checks
-  if (!quantity || !unit_price) {
-    return reply.code(400).send({ message: "Missing required fields" });
-  }
 
   // Find the item by UUID
   const item = sale_items.find((item) => item.uuid === uuid);
@@ -65,16 +62,30 @@ const updateItemController = (req, reply) => {
     return reply.code(404).send({ message: "Item not found" });
   }
 
-  // Update the item
-  item.quantity = quantity;
-  item.unit_price = unit_price;
-  item.subtotal = (quantity * unit_price).toFixed(2); // Recalculate the subtotal
+  // Track if subtotal needs to be recalculated
+  let recalculateSubtotal = false;
 
-  item.updated_at = new Date().toISOString(); // Update the timestamp
+  // Update only the fields that are provided
+  if (quantity !== undefined) {
+    item.quantity = quantity;
+    recalculateSubtotal = true;
+  }
 
-  // Respond with the updated item
+  if (unit_price !== undefined) {
+    item.unit_price = unit_price;
+    recalculateSubtotal = true;
+  }
+
+  // Recalculate subtotal if either quantity or unit_price changed
+  if (recalculateSubtotal) {
+    item.subtotal = (item.quantity * item.unit_price).toFixed(2);
+  }
+
+  item.updated_at = new Date().toISOString();
+
   reply.send(item);
 };
+
 // Soft delete a sale item by UUID (Mark it as deleted without removing)
 const softDeleteItemController = (req, reply) => {
   const { uuid } = req.params; // Use uuid for identification
