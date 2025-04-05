@@ -29,6 +29,9 @@ const Item = {
 //Options for get all items
 const getItemsOptions = {
   schema: {
+    tags: ["Items"],
+    summary: "Get all items",
+    description: "Retrieve all items in the database",
     response: {
       200: {
         type: "array",
@@ -43,6 +46,9 @@ const getItemsOptions = {
 // Options for get item by id
 const getItemOptions = {
   schema: {
+    tags: ["Items"],
+    summary: "Get item by UUID",
+    description: "Retrieve a specific item using its UUID",
     //to add a params object to the schema, uncomment the params object below
     // params: {
     //   type: 'object',
@@ -61,6 +67,9 @@ const getItemOptions = {
 // Options for get item by id
 const postItemOptions = {
   schema: {
+    tags: ['Items'],
+    summary: "Add a new item to the sale",
+    description: "Add a new item to the sale with product details",
     body: {
       type: "object",
       required: ["sale_id", "product_id", "quantity", "unit_price"],
@@ -82,6 +91,9 @@ const postItemOptions = {
 // Options for updating an item
 const updateItemOptions = {
   schema: {
+    tags: ["Items"],
+    summary: "Update an item",
+    description: "Update the details of an existing item",
     params: {
       type: "object",
       properties: {
@@ -90,7 +102,7 @@ const updateItemOptions = {
     },
     body: {
       type: "object",
-      required: ["quantity", "unit_price"],
+      // required: ["quantity", "unit_price"],
       properties: {
         quantity: { type: "integer" },
         unit_price: { type: "number" },
@@ -106,6 +118,9 @@ const updateItemOptions = {
 // Options for soft deleting an item
 const softDeleteItemOptions = {
   schema: {
+    tags: ["Items"],
+    summary: "Soft delete an item",
+    description: "Mark an item as deleted without removing it from the database",
     params: {
       type: "object",
       properties: {

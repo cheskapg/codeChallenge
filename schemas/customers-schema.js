@@ -54,6 +54,9 @@ import {
   // POST new customer
   const postCustomerOptions = {
     schema: {
+        tags: ["Customers"],
+        summary: "Add a new customer",
+        description: "Create a new customer in the database",
       body: {
         type: "object",
         required: ["name", "email", "phone", "address"],
@@ -74,6 +77,9 @@ import {
   // PUT update customer
   const updateCustomerOptions = {
     schema: {
+        tags: ["Customers"],
+        summary: "Update customer by UUID",
+        description: "Update an existing customer using its UUID",
       params: {
         type: "object",
         properties: {
