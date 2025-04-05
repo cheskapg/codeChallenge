@@ -1,4 +1,4 @@
-import { getItemsOptions, getItemOptions } from "../schemas/items-schema.js";
+import { getItemsOptions, getItemOptions, postItemOptions } from "../schemas/items-schema.js";
 function itemRoutes(fastify, options, done) {
   //get syntax (endpoint, options, handler)
 
@@ -7,6 +7,9 @@ function itemRoutes(fastify, options, done) {
 
   //get item by id
   fastify.get("/items/:id", getItemOptions);
+
+  //post item
+  fastify.post("/item", postItemOptions);
 
   done();
 }
