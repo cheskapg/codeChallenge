@@ -1,6 +1,6 @@
 //Business logic for sales
 import customers from "../testData/customers.js";
-import sales from "../sales.js";
+import sales from "../testData/sales.js";
 import sale_items from "../testData/items.js";
 import products from "../testData/products.js";
 

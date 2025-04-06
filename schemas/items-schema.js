@@ -65,28 +65,43 @@ const getItemOptions = {
 };
 
 // Options for get item by id
-const postItemOptions = {
+const postItemOptions = { 
   schema: {
     tags: ['Items'],
     summary: "Add a new item to the sale",
     description: "Add a new item to the sale with product details",
     body: {
       type: "object",
-      required: ["sale_id", "product_id", "quantity", "unit_price"],
+      required: ["product_uuid", "quantity"], // Added required fields
       properties: {
-        sale_uuid: { type: "string" },
-        product_uuid: { type: "string" },
-        quantity: { type: "integer" },
-        unit_price: { type: "number" },
+        sale_uuid: { type: "string" }, // Optional sale_uuid
+        product_uuid: { type: "string" }, // Required product_uuid
+        quantity: { type: "integer" }, // Required quantity
       },
     },
     response: {
-      201: Item,
-      // returns a singular object
+      201: { 
+        type: "object", // Define the response structure
+        properties: {
+          message: { type: "string" },
+          item: { 
+            type: "object", // Define the item object properties
+            properties: {
+              uuid: { type: "string" },
+              sale_id: { type: "integer" },
+              product_id: { type: "integer" },
+              quantity: { type: "integer" },
+              unit_price: { type: "number" },
+              subtotal: { type: "number" },
+            },
+          },
+        },
+      },
     },
   },
   handler: addItemController,
 };
+
 
 // Options for updating an item
 const updateItemOptions = {
