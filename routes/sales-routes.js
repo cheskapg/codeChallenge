@@ -15,6 +15,7 @@ function salesRoutes(fastify, options, done) {
   
 
     fastify.get("/sales/month/:year/:month", getSalesByMonthOptions);
+    
 
     // Post a new sale
     fastify.post("/sale", addSaleOptions);

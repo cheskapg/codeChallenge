@@ -1,8 +1,8 @@
 //Business logic for sales
-import customers from "../data/customers.js";
-import sales from "../data/sales.js";
-import sale_items from "../data/sale_items.js";
-import products from "../data/products.js";
+import customers from "../customers.js";
+import sales from "../sales.js";
+import sale_items from "../items.js";
+import products from "../products.js";
 
 /**
  * Get customer purchases and spending summary by year and month
@@ -13,7 +13,7 @@ export const getCustomerSalesSummaryByMonth = (year, month) => {
 
   // Filter sales in given month and year
   // extracts the full year from the Date object (e.g. 2025).
-  // date.getMonth() gives the zero-based month index (e.g. 3 for April).
+  //date.getMonth() gives the zero-based month index (e.g. 3 for April).
 
   const filteredSales = sales.filter((sale) => {
     const date = new Date(sale.date);
@@ -24,6 +24,10 @@ export const getCustomerSalesSummaryByMonth = (year, month) => {
 
   // Group by customer_id
   const grouped = {};
+  console.log(
+    "Filtered sales:",
+    filteredSales.map((s) => s.id)
+  );
 
   for (const sale of filteredSales) {
     const custId = sale.customer_id;
@@ -31,37 +35,57 @@ export const getCustomerSalesSummaryByMonth = (year, month) => {
 
     if (!grouped[custId]) {
       grouped[custId] = {
-        customer,
         total_spent: 0,
+        customer: {
+          uuid: customer?.uuid || "Unknown",
+          name: customer?.name || "Unknown",
+          // Add other customer fields if needed
+        },
         sales: [],
       };
     }
 
     const items = sale_items
-      .filter((item) => item.sale_id === sale.id && item.deleted_at === null)
+      .filter((item) => {
+        const match = item.sale_id === sale.id && item.deleted_at === null;
+        if (!match) {
+          console.log(
+            `No match: item.sale_id=${item.sale_id} vs sale.id=${sale.id}`
+          );
+        }
+        return match;
+      })
       .map((item) => {
         const product = products.find((p) => p.id === item.product_id);
         return {
-          ...item,
           product_name: product?.name || "Unknown",
-          product_description: product?.description || "",
+          item_uuid: item.uuid,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          subtotal: item.subtotal,
+          product_uuid: product?.uuid || "Unknown",
+          // Add other item fields if needed
         };
       });
 
-    grouped[custId].total_spent += sale.total_amount;
-    grouped[custId].sales.push({
-      sale_id: sale.id,
-      uuid: sale.uuid,
-      date: sale.date,
-      total_amount: sale.total_amount,
-      items,
-    });
+    if (items.length > 0) {
+      grouped[custId].total_spent += sale.total_amount;
+      grouped[custId].sales.push({
+        sale_uuid: sale.uuid,
+        date: sale.date,
+        total_amount: sale.total_amount,
+        items,
+      });
+    }
   }
 
   // Convert object to array
   for (const key in grouped) {
-    result.push(grouped[key]);
+    if (grouped[key].sales.length > 0) {
+      result.push(grouped[key]);
+    }
   }
 
+  console.log(result);
   return result;
 };

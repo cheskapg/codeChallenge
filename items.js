@@ -16,7 +16,7 @@ const sale_items = [
   {
     id: 2,  // integer ID
     uuid: "item-" + uuidv4(),  // new UUID field
-    sale_id: 1,
+    sale_id: 2,
     product_id: 3,  // referencing "Sour Cream Salsa"
     quantity: 2,
     unit_price: 1.99,

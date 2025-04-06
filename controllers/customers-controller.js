@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import customers from "../customers.js"; // Assuming the `customers` data is imported
-import sales from "../sales.js"; // Assuming the `sales` data is imported
+import { getCustomerSalesSummaryByMonth } from "../services/sales-service.js";
 
 const getCustomersController = (req, reply) => {
   // Filter out soft-deleted customers
@@ -93,10 +93,34 @@ const softDeleteCustomerController = (req, reply) => {
   reply.send(customer);
 };
 
+const getCustomerSalesMonthlySummaryController = (req, reply) => {
+    const { year, month } = req.params;
+  
+    // Get active (non-deleted) customers' UUIDs for filtering
+    const activeCustomerIds = customers
+      .filter((customer) => !customer.deleted_at)
+      .map((customer) => customer.id);
+  
+    // Get full summary
+    const customerSalesByMonth = getCustomerSalesSummaryByMonth(year, month);
+  
+    // Filter the results to include only active customers
+    const filteredSummary = customerSalesByMonth.filter((entry) => {
+      return activeCustomerIds.includes(
+        customers.find((c) => c.uuid === entry.customer.uuid)?.id
+      );
+    });
+  
+    reply.send(filteredSummary);
+  };
+  
+  
+  
 export {
   getCustomerController,
   getCustomersController,
   addCustomerController,
   updateCustomerController,
   softDeleteCustomerController,
+  getCustomerSalesMonthlySummaryController
 };
