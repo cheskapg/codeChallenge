@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import customers from "../customers.js"; // Assuming the `customers` data is imported
+import customers from "../testData/customers.js"; // Assuming the `customers` data is imported
 import sales from "../sales.js"; // Assuming the `sales` data is imported
-import sale_items from "../items.js"; // Assuming the `sale_items` data is imported
+import sale_items from "../testData/items.js"; // Assuming the `sale_items` data is imported
 
 // Get all sales (with optional filtering for active sales)
 const getSalesController = (req, reply) => {

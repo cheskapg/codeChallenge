@@ -1,8 +1,8 @@
 //Business logic for sales
-import customers from "../customers.js";
+import customers from "../testData/customers.js";
 import sales from "../sales.js";
-import sale_items from "../items.js";
-import products from "../products.js";
+import sale_items from "../testData/items.js";
+import products from "../testData/products.js";
 
 /**
  * Get customer purchases and spending summary by year and month

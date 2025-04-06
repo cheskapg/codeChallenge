@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-import products from '../products.js';  // Assuming you have products data in a separate model
+import { v4 as uuidv4 } from "uuid";
+import products from "../testData/products.js"; // Assuming you have products data in a separate model
 
 // Get all products
 const getProductsController = (req, reply) => {
@@ -10,11 +10,11 @@ const getProductsController = (req, reply) => {
 const getProductController = (req, reply) => {
   const { uuid } = req.params;
   const product = products.find((prod) => prod.uuid === uuid);
-  
+
   if (!product) {
     return reply.code(404).send({ message: "Product not found" });
   }
-  
+
   reply.send(product);
 };
 
@@ -27,7 +27,7 @@ const addProductController = (req, reply) => {
   }
 
   const newProduct = {
-    id: products.length + 1,  // increment ID
+    id: products.length + 1, // increment ID
     uuid: "prod-" + uuidv4(),
     name,
     description,
@@ -69,7 +69,7 @@ const softDeleteProductController = (req, reply) => {
     return reply.code(404).send({ message: "Product not found" });
   }
 
-  product.deleted_at = new Date().toISOString();  // Mark the product as deleted
+  product.deleted_at = new Date().toISOString(); // Mark the product as deleted
   reply.send(product);
 };
 

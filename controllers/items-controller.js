@@ -1,5 +1,5 @@
 //controller for sale_items / handler for sale_items
-import sale_items from "../items.js";
+import sale_items from "../testData/items.js";
 import { v4 as uuidv4 } from "uuid";
 import sales from "../sales.js"; // Assuming the `sales` data is imported.
 

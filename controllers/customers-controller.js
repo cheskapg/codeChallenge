@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import customers from "../customers.js"; // Assuming the `customers` data is imported
+import customers from "../testData/customers.js"; // Assuming the `customers` data is imported
 import { getCustomerSalesSummaryByMonth } from "../services/sales-service.js";
 
 const getCustomersController = (req, reply) => {
@@ -53,9 +53,9 @@ const updateCustomerController = (req, reply) => {
   const { name, email, phone, address } = req.body;
 
   // Validation checks
-//   if (!name || !email || !phone || !address) {
-//     return reply.code(400).send({ message: "Missing required fields" });
-//   }
+  //   if (!name || !email || !phone || !address) {
+  //     return reply.code(400).send({ message: "Missing required fields" });
+  //   }
 
   // Find the customer by UUID
   const customer = customers.find((customer) => customer.uuid === uuid);
@@ -70,7 +70,6 @@ const updateCustomerController = (req, reply) => {
   if (email !== undefined) customer.email = email;
   if (phone !== undefined) customer.phone = phone;
   if (address !== undefined) customer.address = address;
-
 
   // Respond with the updated customer
   reply.send(customer);
@@ -94,33 +93,31 @@ const softDeleteCustomerController = (req, reply) => {
 };
 
 const getCustomerSalesMonthlySummaryController = (req, reply) => {
-    const { year, month } = req.params;
-  
-    // Get active (non-deleted) customers' UUIDs for filtering
-    const activeCustomerIds = customers
-      .filter((customer) => !customer.deleted_at)
-      .map((customer) => customer.id);
-  
-    // Get full summary
-    const customerSalesByMonth = getCustomerSalesSummaryByMonth(year, month);
-  
-    // Filter the results to include only active customers
-    const filteredSummary = customerSalesByMonth.filter((entry) => {
-      return activeCustomerIds.includes(
-        customers.find((c) => c.uuid === entry.customer.uuid)?.id
-      );
-    });
-  
-    reply.send(filteredSummary);
-  };
-  
-  
-  
+  const { year, month } = req.params;
+
+  // Get active (non-deleted) customers' UUIDs for filtering
+  const activeCustomerIds = customers
+    .filter((customer) => !customer.deleted_at)
+    .map((customer) => customer.id);
+
+  // Get full summary
+  const customerSalesByMonth = getCustomerSalesSummaryByMonth(year, month);
+
+  // Filter the results to include only active customers
+  const filteredSummary = customerSalesByMonth.filter((entry) => {
+    return activeCustomerIds.includes(
+      customers.find((c) => c.uuid === entry.customer.uuid)?.id
+    );
+  });
+
+  reply.send(filteredSummary);
+};
+
 export {
   getCustomerController,
   getCustomersController,
   addCustomerController,
   updateCustomerController,
   softDeleteCustomerController,
-  getCustomerSalesMonthlySummaryController
+  getCustomerSalesMonthlySummaryController,
 };
