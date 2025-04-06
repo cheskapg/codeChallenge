@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 const getItemsController = async (req, reply) => {
   try {
     const result = await pool.query(
-      `SELECT uuid, sale_id, product_id, item_name, quantity, unit_price, created_at, updated_at
+      `SELECT uuid, sale_id, product_id, quantity, unit_price, created_at, updated_at
        FROM sale_items
        WHERE deleted_at IS NULL`
     );
@@ -21,7 +21,7 @@ const getItemController = async (req, reply) => {
   const { uuid } = req.params;
   try {
     const result = await pool.query(
-      `SELECT uuid, sale_id, product_id, item_name, quantity, unit_price, created_at, updated_at
+      `SELECT uuid, sale_id, product_id, quantity, unit_price, created_at, updated_at
        FROM sale_items
        WHERE uuid = $1 AND deleted_at IS NULL`,
       [uuid]
@@ -61,7 +61,7 @@ const addItemController = async (req, reply) => {
         `INSERT INTO sales (uuid, total_amount, created_at, updated_at)
          VALUES ($1, $2, NOW(), NOW())
          RETURNING id`,
-        [uuidv4(), 0]  // New sale with 0 initial total_amount
+        ["item-"+uuidv4(), 0]  // New sale with 0 initial total_amount
       );
       saleId = newSaleRes.rows[0].id;
     }

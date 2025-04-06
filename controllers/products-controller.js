@@ -38,7 +38,7 @@ const addProductController = async (req, reply) => {
     return reply.code(400).send({ message: "Missing required fields" });
   }
 
-  const newProductUuid = uuidv4();
+  const newProductUuid = "prod-"+uuidv4();
 
   try {
     const res = await pool.query(
