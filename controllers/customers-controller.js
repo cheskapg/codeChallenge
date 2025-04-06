@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 // import customers from "../testData/customers.js"; // Assuming the `customers` data is imported
-// import { getCustomerSalesSummaryByMonth } from "../services/sales-service.js";
+import { getCustomerSalesSummaryByMonth } from "../services/sales-service.js";
 import pool from "../plugins/db.js"; // 
 
 //test data
@@ -217,32 +217,20 @@ const getCustomerController = async (req, reply) => {
   };
   
   // Get customer sales monthly summary
-  const getCustomerSalesMonthlySummaryController = async (req, reply) => {
+ // Express or Fastify route to handle the request
+const getCustomerSalesMonthlySummaryController = async (req, reply) => {
     const { year, month } = req.params;
-  
+    const summary = await getCustomerSalesSummaryByMonth(year, month);
+    console.log(summary)
     try {
-      // Get the active customers' UUIDs
-      const activeCustomerIdsResult = await pool.query('SELECT id FROM customers WHERE deleted_at IS NULL');
-      const activeCustomerIds = activeCustomerIdsResult.rows.map((customer) => customer.id);
-  
-      // Get sales for the given month
-      const salesResult = await pool.query(`
-        SELECT s.uuid, s.date, s.total_amount, si.quantity, si.unit_price
-        FROM sales s
-        JOIN sale_items si ON s.uuid = si.sale_id
-        WHERE EXTRACT(YEAR FROM s.date) = $1 AND EXTRACT(MONTH FROM s.date) = $2
-      `, [year, month]);
-  
-      // Filter sales to include only active customers
-      const filteredSales = salesResult.rows.filter((sale) =>
-        activeCustomerIds.includes(sale.customer_id)
-      );
-  
-      reply.send(filteredSales);
+      const summary = await getCustomerSalesSummaryByMonth(year, month);
+      console.log(summary)
+    //   reply.send(summary);
     } catch (err) {
       reply.code(500).send({ message: "Error retrieving customer sales summary", error: err });
     }
   };
+  
   
 export {
   getCustomerController,
