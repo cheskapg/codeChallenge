@@ -21,7 +21,7 @@ const Sales = {
 };
 const getSalesByMonthOptions = {
   schema: {
-    tags: ["Sales"],
+    tags: ["Get Sales Summary"],
     summary: "Get all sales by month",
     description: "Retrieve all sales for a specific month and year",
     params: {

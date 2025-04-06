@@ -1,9 +1,11 @@
+import { validate } from "uuid";
 import {
   getCustomersController,
   getCustomerController,
   addCustomerController,
   updateCustomerController,
   softDeleteCustomerController,
+  getCustomerSalesMonthlySummaryController,
 } from "../controllers/customers-controller.js";
 
 // Customer Schema
@@ -128,11 +130,83 @@ const softDeleteCustomerOptions = {
   },
   handler: softDeleteCustomerController,
 };
-
+const getCustomerSalesSummaryOptions = {
+    schema: {
+      description:
+        "Get sales summary grouped by customer for a specific month and year",
+      tags: ["Get Sales Summary"],
+      summary: "Get customer sales summary",
+      params: {
+        type: "object",
+        properties: {
+            year: { type: "integer", minimum: 2000, maximum: 2030 }, // Valid year range
+            month: { type: "integer", minimum: 1, maximum: 12 }, // Valid month range (1 to 12)
+          },
+        required: ["year", "month"],
+      },
+      response: {
+        200: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              total_spent: { type: "number" },
+              customer: {
+                type: "object",
+                properties: {
+                  uuid: { type: "string" },
+                  name: { type: "string" },
+                },
+                required: ["uuid", "name"],
+              },
+              sales: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    sale_uuid: { type: "string" },
+                    date: { type: "string", format: "date-time" },
+                    total_amount: { type: "number" },
+                    items: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          product_name: { type: "string" },
+                          item_uuid: { type: "string" },
+                          quantity: { type: "integer" },
+                          unit_price: { type: "number" },
+                          subtotal: { type: "number" },
+                          product_uuid: { type: "string" },
+                        },
+                        required: [
+                          "product_name",
+                          "item_uuid",
+                          "quantity",
+                          "unit_price",
+                          "subtotal",
+                          "product_uuid",
+                        ],
+                      },
+                    },
+                  },
+                  required: ["sale_uuid", "date", "total_amount", "items"],
+                },
+              },
+            },
+            required: ["total_spent", "customer", "sales"],
+          },
+        },
+      },
+    },
+    handler: getCustomerSalesMonthlySummaryController,
+  };
+  
 export {
   getCustomersOptions,
   getCustomerOptions,
   postCustomerOptions,
   updateCustomerOptions,
   softDeleteCustomerOptions,
+  getCustomerSalesSummaryOptions,
 };

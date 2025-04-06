@@ -96,7 +96,7 @@ const softDeleteSaleController = (req, reply) => {
 };
 
 const getSalesByCustomerAndMonthController = (req, reply) => {
-  const { customer_id, year, month } = req.params; // Get customer_id, year, and month from URL params
+  const {  year, month } = req.params; // Get customer_id, year, and month from URL params
 
   // Convert year and month to integers
   const targetYear = parseInt(year);
