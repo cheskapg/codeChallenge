@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 // import customers from "../testData/customers.js"; // Assuming the `customers` data is imported
-import { getCustomerSalesSummaryByMonth } from "../services/sales-service.js";
-import pool from "../plugins/db.js"; // 
+
+import pool from "../plugins/db.js"; //
 
 //test data
 // const getCustomersController = (req, reply) => {
@@ -119,61 +119,65 @@ import pool from "../plugins/db.js"; //
 // Assuming you have a database connection pool set up
 // Get all active customers
 const getCustomersController = async (req, reply) => {
-    try {
-      const result = await pool.query('SELECT * FROM customers WHERE deleted_at IS NULL');
-      reply.send(result.rows);
-    } catch (err) {
-      reply.code(500).send({ message: "Error retrieving customers", error: err });
-    }
-  };
+  try {
+    const result = await pool.query(
+      "SELECT * FROM customers WHERE deleted_at IS NULL"
+    );
+    reply.send(result.rows);
+  } catch (err) {
+    reply.code(500).send({ message: "Error retrieving customers", error: err });
+  }
+};
 
-  
 // Get a single customer by UUID
 const getCustomerController = async (req, reply) => {
-    const { uuid } = req.params;
-    try {
-      const result = await pool.query('SELECT * FROM customers WHERE uuid = $1 AND deleted_at IS NULL', [uuid]);
-  
-      if (result.rows.length === 0) {
-        return reply.code(404).send({ message: "Customer not found or deleted" });
-      }
-  
-      reply.send(result.rows[0]);
-    } catch (err) {
-      reply.code(500).send({ message: "Error retrieving customer", error: err });
+  const { uuid } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM customers WHERE uuid = $1 AND deleted_at IS NULL",
+      [uuid]
+    );
+
+    if (result.rows.length === 0) {
+      return reply.code(404).send({ message: "Customer not found or deleted" });
     }
-  };
-  
-  // Add a new customer
-  const addCustomerController = async (req, reply) => {
-    const { name, email, phone, address } = req.body;
-  
-    if (!name || !email || !phone || !address) {
-      return reply.code(400).send({ message: "Missing required fields" });
-    }
-  
-    const uuid = "cust-" + uuidv4();
-    const createdAt = new Date().toISOString();
-    const updatedAt = new Date().toISOString();
-    try {
-      const result = await pool.query(
-        'INSERT INTO customers (uuid, name, email, phone, address, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-        [uuid, name, email, phone, address, createdAt,updatedAt]
-      );
-  
-      reply.code(201).send(result.rows[0]);
-    } catch (err) {
-      reply.code(500).send({ message: "Error adding customer", error: err });
-    }
-  };
-  // Update an existing customer by UUID
-  const updateCustomerController = async (req, reply) => {
-    const { uuid } = req.params;
-    const { name, email, phone, address } = req.body;
-  
-    try {
-      const result = await pool.query(
-        `UPDATE customers
+
+    reply.send(result.rows[0]);
+  } catch (err) {
+    reply.code(500).send({ message: "Error retrieving customer", error: err });
+  }
+};
+
+// Add a new customer
+const addCustomerController = async (req, reply) => {
+  const { name, email, phone, address } = req.body;
+
+  if (!name || !email || !phone || !address) {
+    return reply.code(400).send({ message: "Missing required fields" });
+  }
+
+  const uuid = "cust-" + uuidv4();
+  const createdAt = new Date().toISOString();
+  const updatedAt = new Date().toISOString();
+  try {
+    const result = await pool.query(
+      "INSERT INTO customers (uuid, name, email, phone, address, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [uuid, name, email, phone, address, createdAt, updatedAt]
+    );
+
+    reply.code(201).send(result.rows[0]);
+  } catch (err) {
+    reply.code(500).send({ message: "Error adding customer", error: err });
+  }
+};
+// Update an existing customer by UUID
+const updateCustomerController = async (req, reply) => {
+  const { uuid } = req.params;
+  const { name, email, phone, address } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE customers
          SET name = COALESCE($1, name),
              email = COALESCE($2, email),
              phone = COALESCE($3, phone),
@@ -181,64 +185,54 @@ const getCustomerController = async (req, reply) => {
              updated_at = NOW()
          WHERE uuid = $5
          RETURNING *`,
-        [name, email, phone, address, uuid]
-      );
-  
-      if (result.rows.length === 0) {
-        return reply.code(404).send({ message: "Customer not found" });
-      }
-  
-      reply.send(result.rows[0]);
-    } catch (err) {
-      reply.code(500).send({ message: "Error updating customer", error: err });
+      [name, email, phone, address, uuid]
+    );
+
+    if (result.rows.length === 0) {
+      return reply.code(404).send({ message: "Customer not found" });
     }
-  };
-  
-  
-  // Soft delete a customer by UUID
-  const softDeleteCustomerController = async (req, reply) => {
-    const { uuid } = req.params;
-  
-    try {
-      // Find customer in database
-      const result = await pool.query('SELECT * FROM customers WHERE uuid = $1', [uuid]);
-      if (result.rows.length === 0) {
-        return reply.code(404).send({ message: "Customer not found" });
-      }
-  
-      // Mark as deleted by setting `deleted_at`
-      const deletedAt = new Date().toISOString();
-      await pool.query('UPDATE customers SET deleted_at = $1 WHERE uuid = $2', [deletedAt, uuid]);
-  
-      reply.send({ message: "Customer soft-deleted successfully" });
-    } catch (err) {
-      reply.code(500).send({ message: "Error deleting customer", error: err });
+
+    reply.send(result.rows[0]);
+  } catch (err) {
+    reply.code(500).send({ message: "Error updating customer", error: err });
+  }
+};
+
+// Soft delete a customer by UUID
+const softDeleteCustomerController = async (req, reply) => {
+  const { uuid } = req.params;
+
+  try {
+    // Find customer in database
+    const result = await pool.query("SELECT * FROM customers WHERE uuid = $1", [
+      uuid,
+    ]);
+    if (result.rows.length === 0) {
+      return reply.code(404).send({ message: "Customer not found" });
     }
-  };
-  
-  // Get customer sales monthly summary
- // Express or Fastify route to handle the request
-const getCustomerSalesMonthlySummaryController = async (req, reply) => {
-    const { year, month } = req.params;
-    const summary = await getCustomerSalesSummaryByMonth(year, month);
-    console.log(summary)
-    try {
-      const summary = await getCustomerSalesSummaryByMonth(year, month);
-      console.log(summary)
-    //   reply.send(summary);
-    } catch (err) {
-      reply.code(500).send({ message: "Error retrieving customer sales summary", error: err });
-    }
-  };
-  
-  
+
+    // Mark as deleted by setting `deleted_at`
+    const deletedAt = new Date().toISOString();
+    await pool.query("UPDATE customers SET deleted_at = $1 WHERE uuid = $2", [
+      deletedAt,
+      uuid,
+    ]);
+
+    reply.send({ message: "Customer soft-deleted successfully" });
+  } catch (err) {
+    reply.code(500).send({ message: "Error deleting customer", error: err });
+  }
+};
+
+// Get customer sales monthly summary
+// Express or Fastify route to handle the request
+
 export {
   getCustomerController,
   getCustomersController,
   addCustomerController,
   updateCustomerController,
   softDeleteCustomerController,
-  getCustomerSalesMonthlySummaryController,
 };
 
 

@@ -1,7 +1,6 @@
 // schema validation
 
 import {
-  getSalesByMonthController,
   getSalesController,
   getSaleController,
   addSaleController,
@@ -18,45 +17,6 @@ const Sales = {
     date: { type: "string", format: "date-time" },
     total_amount: { type: "number" },
   },
-};
-const getSalesByMonthOptions = {
-  schema: {
-    tags: ["Get Sales Summary"],
-    summary: "Get all sales by month",
-    description: "Retrieve all sales for a specific month and year",
-    params: {
-      type: "object",
-      properties: {
-        year: { type: "integer" },
-        month: { type: "integer" },
-      },
-    },
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          totalMonthlySales: { type: "number" }, // Total sales for the month
-          month: { type: "integer" }, // Target month (1-12)
-          year: { type: "integer" }, // Target year
-          numberOfSales: { type: "integer" }, // Number of sales in the month
-          sales: {
-            type: "array", // Array of sales
-            items: {
-              type: "object",
-              properties: {
-                //   id: { type: "integer" },
-                uuid: { type: "string" },
-                customer_id: { type: "integer" },
-                date: { type: "string", format: "date-time" },
-                total_amount: { type: "number" },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  handler: getSalesByMonthController,
 };
 
 //Options for get all items
@@ -156,7 +116,7 @@ const softDeleteSaleOptions = {
   handler: softDeleteSaleController,
 };
 export {
-  getSalesByMonthOptions,
+  
   getSaleOptions,
   getSalesOptions,
   updateSaleOptions,

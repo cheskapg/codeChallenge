@@ -5,10 +5,24 @@ import { v4 as uuidv4 } from "uuid";
 const getItemsController = async (req, reply) => {
   try {
     const result = await pool.query(
-      `SELECT uuid, sale_id, product_id, quantity, unit_price, created_at, updated_at
+      `SELECT 
+         sale_items.uuid,
+         sale_items.sale_id,
+         sale_items.product_id,
+         sale_items.quantity,
+         sale_items.unit_price,
+         products.uuid as product_uuid,
+         products.name as product_name,
+         sales.id as sale_id,
+         sale_items.subtotal, 
+         sale_items.created_at,
+         sale_items.updated_at
        FROM sale_items
-       WHERE deleted_at IS NULL`
+       JOIN products ON sale_items.product_id = products.id
+       JOIN sales ON sale_items.sale_id = sales.id
+       WHERE sale_items.deleted_at IS NULL`
     );
+    console.log(result.rows[0].sales, "result.rows");
     reply.send(result.rows);
   } catch (err) {
     console.error("Error fetching items:", err);

@@ -16,6 +16,7 @@ const Item = {
     uuid: { type: "string", format: "uuid" }, // UUID for the item
     sale_uuid: { type: "string" }, // Reference to the sale this item belongs to
     product_uuid: { type: "string" }, // Reference to the product in the sale
+    product_name: { type: "string" }, // Reference to the product in the sale
     quantity: { type: "integer" }, // Quantity of this product in the sale
     unit_price: { type: "number", format: "float" }, // Price per unit of the product
     subtotal: { type: "number", format: "float" }, // Calculated total for this product (quantity * unit_price)
