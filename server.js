@@ -1,5 +1,7 @@
 //imports
 // index.js
+import cors from "@fastify/cors";
+// import { createServer } from "http";
 import Fastify from "fastify";
 import itemRoutes from "./routes/items-routes.js";
 import fastifySwagger from "@fastify/swagger";
