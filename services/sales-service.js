@@ -1,91 +1,103 @@
-//Business logic for sales
-import customers from "../customers.js";
-import sales from "../sales.js";
-import sale_items from "../items.js";
-import products from "../products.js";
+    // Business logic for sales
+    import pool from "../plugins/db.js"; // Database connection
 
-/**
- * Get customer purchases and spending summary by year and month
- */
-export const getCustomerSalesSummaryByMonth = (year, month) => {
-  const targetMonth = parseInt(month) - 1;
-  const result = [];
-
-  // Filter sales in given month and year
-  // extracts the full year from the Date object (e.g. 2025).
-  //date.getMonth() gives the zero-based month index (e.g. 3 for April).
-
-  const filteredSales = sales.filter((sale) => {
-    const date = new Date(sale.date);
-    return (
-      date.getFullYear() === parseInt(year) && date.getMonth() === targetMonth
-    );
-  });
-
-  // Group by customer_id
-  const grouped = {};
-  console.log(
-    "Filtered sales:",
-    filteredSales.map((s) => s.id)
-  );
-
-  for (const sale of filteredSales) {
-    const custId = sale.customer_id;
-    const customer = customers.find((c) => c.id === custId);
-
-    if (!grouped[custId]) {
-      grouped[custId] = {
-        total_spent: 0,
-        customer: {
-          uuid: customer?.uuid || "Unknown",
-          name: customer?.name || "Unknown",
-          // Add other customer fields if needed
-        },
-        sales: [],
-      };
-    }
-
-    const items = sale_items
-      .filter((item) => {
-        const match = item.sale_id === sale.id && item.deleted_at === null;
-        if (!match) {
-          console.log(
-            `No match: item.sale_id=${item.sale_id} vs sale.id=${sale.id}`
-          );
+    /**
+     * Get customer purchases and spending summary by year and month
+     */
+    const getCustomerSalesSummaryByMonth = async (year, month) => {
+        const result = [];
+    
+        try {
+        // Step 1: Get active customers
+        const activeCustomerIdsResult = await pool.query(
+            "SELECT id, uuid, name FROM customers WHERE deleted_at IS NULL"
+        );
+        const activeCustomers = activeCustomerIdsResult.rows;
+        const customerIds = activeCustomers.map(c => c.id);
+    console.log(customerIds, "customerIds");
+        // Step 2: Get sales data
+        const salesResult = await pool.query(
+            `
+            SELECT 
+                s.uuid AS sale_uuid, 
+                s.customer_id, 
+                s.date AS sale_date, 
+                s.total_amount,
+                si.uuid AS item_uuid, 
+                si.quantity, 
+                si.unit_price, 
+                si.subtotal,
+                p.uuid AS product_uuid, 
+                p.name AS product_name
+            FROM sales s
+            JOIN sale_items si ON s.id = si.sale_id
+            JOIN products p ON si.product_id = p.id
+            WHERE 
+                EXTRACT(YEAR FROM s.date::DATE) = $1
+                AND EXTRACT(MONTH FROM s.date::DATE) = $2
+                AND s.customer_id = ANY ($3)
+            `,
+            [year, month, customerIds]
+        );
+    
+        // Step 3: Group by customer_id and sale_uuid
+        const grouped = {};
+    
+        for (const row of salesResult.rows) {
+            const customer = activeCustomers.find(c => c.id === row.customer_id);
+            const custId = row.customer_id;
+    
+            if (!grouped[custId]) {
+            grouped[custId] = {
+                total_spent: 0,
+                customer: {
+                uuid: customer?.uuid || "Unknown",
+                name: customer?.name || "Unknown",
+                },
+                sales: {},
+            };
+            }
+    
+            // If sale doesn't exist yet under this customer, add it
+            if (!grouped[custId].sales[row.sale_uuid]) {
+            grouped[custId].sales[row.sale_uuid] = {
+                sale_uuid: row.sale_uuid,
+                date: row.sale_date,
+                total_amount: row.total_amount,
+                items: [],
+            };
+    
+            // Add to total spent once per sale
+            grouped[custId].total_spent += parseFloat(row.total_amount);
+            }
+    
+            // Add item to the sale's items list
+            grouped[custId].sales[row.sale_uuid].items.push({
+            item_uuid: row.item_uuid,
+            product_name: row.product_name,
+            quantity: row.quantity,
+            unit_price: row.unit_price,
+            subtotal: row.subtotal,
+            product_uuid: row.product_uuid,
+            });
         }
-        return match;
-      })
-      .map((item) => {
-        const product = products.find((p) => p.id === item.product_id);
-        return {
-          product_name: product?.name || "Unknown",
-          item_uuid: item.uuid,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          subtotal: item.subtotal,
-          product_uuid: product?.uuid || "Unknown",
-          // Add other item fields if needed
-        };
-      });
+    
+        // Step 4: Format final result
+        for (const custId in grouped) {
+            const salesArray = Object.values(grouped[custId].sales);
+            result.push({
+            total_customer_monthly_sale: parseFloat(grouped[custId].total_spent.toFixed(2)),
+            customer: grouped[custId].customer,
+            sales: salesArray,
+            });
+        }
+    
+        return result;
+        } catch (err) {
+        console.error("Error retrieving customer sales summary:", err);
+        throw new Error("Error retrieving customer sales summary");
+        }
+    };
+    
 
-    if (items.length > 0) {
-      grouped[custId].total_spent += sale.total_amount;
-      grouped[custId].sales.push({
-        sale_uuid: sale.uuid,
-        date: sale.date,
-        total_amount: sale.total_amount,
-        items,
-      });
-    }
-  }
-
-  // Convert object to array
-  for (const key in grouped) {
-    if (grouped[key].sales.length > 0) {
-      result.push(grouped[key]);
-    }
-  }
-
-  console.log(result);
-  return result;
-};
+    export { getCustomerSalesSummaryByMonth };

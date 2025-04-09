@@ -4,18 +4,13 @@ getSalesOptions,
 addSaleOptions,
 updateSaleOptions,
 softDeleteSaleOptions,
-getSalesByMonthOptions,
 } from "../schemas/sales-schema.js";
 function salesRoutes(fastify, options, done) {
     // Get all sales
-    fastify.get("/sales", getSalesOptions);
+    fastify.get("/sales/all", getSalesOptions);
   
     // Get sale by UUID
     fastify.get("/sales/:uuid", getSaleOptions);
-  
-
-    fastify.get("/sales/month/:year/:month", getSalesByMonthOptions);
-    
 
     // Post a new sale
     fastify.post("/sale", addSaleOptions);

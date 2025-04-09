@@ -1,11 +1,11 @@
-import { getCustomerSalesMonthlySummaryController } from "../controllers/customers-controller.js";
+
 import {
     getCustomersOptions,
     getCustomerOptions,
     postCustomerOptions,
     updateCustomerOptions,
     softDeleteCustomerOptions,
-    getCustomerSalesSummaryOptions
+    // getCustomerSalesSummaryOptions
   } from "../schemas/customers-schema.js";
   
   function customerRoutes(fastify, options, done) {
@@ -26,7 +26,7 @@ import {
   
   // customer-wise sales summary for a given year and month
 
-    fastify.get("/customers/sales/:year/:month", getCustomerSalesSummaryOptions);
+    // fastify.get("/customers/sales/:year/:month", getCustomerSalesSummaryOptions);
   
 
     done();

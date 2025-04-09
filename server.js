@@ -1,5 +1,7 @@
 //imports
 // index.js
+import cors from "@fastify/cors";
+// import { createServer } from "http";
 import Fastify from "fastify";
 import itemRoutes from "./routes/items-routes.js";
 import fastifySwagger from "@fastify/swagger";
@@ -9,7 +11,16 @@ import salesRoutes from "./routes/sales-routes.js";
 import productRoutes from "./routes/products-routes.js";
 const PORT = process.env.PORT || 3000;
 const fastify = Fastify();
-
+await fastify.register(cors, {
+    origin: "*",
+    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+    allowedHeaders: [
+      'content-type',
+      'accept',
+      'content-type',
+      'authorization'
+    ],
+  })
 const swaggerOptions = {
   openapi: {
     openapi: "3.0.0",
