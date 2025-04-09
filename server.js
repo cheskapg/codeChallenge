@@ -9,6 +9,7 @@ import fastifySwaggerUI from "@fastify/swagger-ui";
 import customerRoutes from "./routes/customers-routes.js";
 import salesRoutes from "./routes/sales-routes.js";
 import productRoutes from "./routes/products-routes.js";
+import reportsRoutes from "./routes/reports-routes.js";
 const PORT = process.env.PORT || 3000;
 const fastify = Fastify();
 await fastify.register(cors, {
@@ -50,7 +51,8 @@ await fastify.register(fastifySwaggerUI, swaggerUiOptions);
 await fastify.register(itemRoutes); //
 await fastify.register(customerRoutes); //
 await fastify.register(salesRoutes); //
-fastify.register(productRoutes); //
+await fastify.register(productRoutes); //
+await fastify.register(reportsRoutes); //
 
 // fastify.get("/", async (req, reply) => {
 //   return { hello: "esm world" };

@@ -22,8 +22,12 @@ const getItemsController = async (req, reply) => {
        JOIN sales ON sale_items.sale_id = sales.id
        WHERE sale_items.deleted_at IS NULL`
     );
-    console.log(result.rows[0].sales, "result.rows");
-    reply.send(result.rows);
+    const items = result?.rows || [];
+
+    if (items.length === 0) {
+      return reply.code(200).send([]); // preferred, consistent type
+    }
+    reply.send(items);
   } catch (err) {
     console.error("Error fetching items:", err);
     reply.code(500).send({ message: "Internal server error" });
@@ -224,31 +228,33 @@ const softDeleteItemController = async (req, reply) => {
   const { uuid } = req.params;
 
   try {
-    // Fetch item
+    // 1. Check item exists and not already deleted
     const itemRes = await pool.query(
-      `SELECT id, sale_id, quantity, unit_price FROM sale_items WHERE uuid = $1 AND deleted_at IS NULL`,
+      `SELECT id, sale_id, quantity, unit_price 
+       FROM sale_items 
+       WHERE uuid = $1 AND deleted_at IS NULL`,
       [uuid]
     );
+
     if (itemRes.rowCount === 0) {
-      return reply.code(404).send({ message: "Item not found" });
+      return reply.code(404).send({ message: "Item not found or already deleted" });
     }
 
     const item = itemRes.rows[0];
-    const subtotal = item.quantity * item.unit_price;
+    const subtotal = parseFloat(item.quantity) * parseFloat(item.unit_price);
 
-    // Soft delete
+    // 2. Soft delete the item
     await pool.query(
-      `UPDATE sale_items
-       SET deleted_at = NOW()
+      `UPDATE sale_items 
+       SET deleted_at = NOW(), updated_at = NOW()
        WHERE uuid = $1`,
       [uuid]
     );
 
-    // Update total
+    // 3. Update sale's total amount
     await pool.query(
-      `UPDATE sales
-       SET total_amount = total_amount - $1,
-           updated_at = NOW()
+      `UPDATE sales 
+       SET total_amount = total_amount - $1, updated_at = NOW()
        WHERE id = $2`,
       [subtotal, item.sale_id]
     );
@@ -259,6 +265,7 @@ const softDeleteItemController = async (req, reply) => {
     reply.code(500).send({ message: "Internal server error" });
   }
 };
+
 
 export {
   getItemController,
