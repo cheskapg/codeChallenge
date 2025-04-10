@@ -6,16 +6,18 @@ import {
   addSaleController,
   softDeleteSaleController,
   updateSaleController,
+  getCustomerSalesController
 } from "../controllers/sales-controller.js";
 
 const Sales = {
   type: "object",
   properties: {
-    id: { type: "integer" },
-    uuid: { type: "string" },
-    customer_id: { type: "integer" },
+    sale_uuid: { type: "string" },
+    customer_uuid: { type: "string" },
     date: { type: "string", format: "date-time" },
     total_amount: { type: "number" },
+    created_at: { type: "string", format: "date-time" },
+    updated_at: { type: "string", format: "date-time" },
   },
 };
 
@@ -34,6 +36,21 @@ const getSalesOptions = {
     },
   },
   handler: getSalesController,
+};
+const getCustomerSalesOptions = {
+  schema: {
+    tags: ["Sales"],
+    summary: "Get all customer sales",
+    description: "Retrieve all sales in the database",
+    response: {
+      200: {
+        type: "array",
+        //returns an array of objects
+        items: Sales,
+      },
+    },
+  },
+  handler: getCustomerSalesController,
 };
 
 // Options for get item by id
@@ -119,6 +136,7 @@ export {
   
   getSaleOptions,
   getSalesOptions,
+ getCustomerSalesOptions,
   updateSaleOptions,
   addSaleOptions,
   softDeleteSaleOptions,
