@@ -78,6 +78,7 @@ const postItemOptions = {
         sale_uuid: { type: "string" }, // Optional sale_uuid
         product_uuid: { type: "string" }, // Required product_uuid
         quantity: { type: "integer" }, // Required quantity
+        customer_uuid: { type: "string" }, // Required quantity
       },
     },
     response: {

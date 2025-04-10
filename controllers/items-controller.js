@@ -54,15 +54,39 @@ const getItemController = async (req, reply) => {
   }
 };
 const addItemController = async (req, reply) => {
-  const { sale_uuid, product_uuid, quantity } = req.body;
+  const { sale_uuid, product_uuid, quantity, customer_uuid } = req.body;
 
-  if (!product_uuid || !quantity) {
+  if (!product_uuid || !quantity || (!sale_uuid && !customer_uuid)) {
     return reply.code(400).send({ message: "Missing required fields" });
   }
-  
+
   let saleId;
 
   try {
+    // 1. Get product details early so we can calculate subtotal before creating sale
+    const productRes = await pool.query(
+      `SELECT id, name, price, stock FROM products WHERE uuid = $1 AND deleted_at IS NULL`,
+      [product_uuid]
+    );
+
+    if (productRes.rowCount === 0) {
+      return reply.code(404).send({ message: "Product not found" });
+    }
+
+    const {
+      id: productId,
+      price: unitPrice,
+      stock: currentStock,
+    } = productRes.rows[0];
+
+    if (currentStock < quantity) {
+      return reply.code(400).send({ message: "Not enough stock available" });
+    }
+
+    const subtotal = quantity * unitPrice;
+    const itemUuid = uuidv4();
+
+    // 2. Use existing sale if provided
     if (sale_uuid) {
       const saleRes = await pool.query(
         `SELECT id FROM sales WHERE uuid = $1 AND deleted_at IS NULL`,
@@ -72,46 +96,33 @@ const addItemController = async (req, reply) => {
       if (saleRes.rowCount === 0) {
         return reply.code(404).send({ message: "Sale not found" });
       }
+
       saleId = saleRes.rows[0].id;
     } else {
-      // If sale_uuid is empty, create a new sale
-      const newSaleRes = await pool.query(
-        `INSERT INTO sales (uuid, total_amount, created_at, updated_at)
-         VALUES ($1, $2, NOW(), NOW())
-         RETURNING id`,
-        ["item-"+uuidv4(), 0]  // New sale with 0 initial total_amount
+      // 3. Fetch customer ID from UUID
+      const customerRes = await pool.query(
+        `SELECT id FROM customers WHERE uuid = $1 AND deleted_at IS NULL`,
+        [customer_uuid]
       );
+
+      if (customerRes.rowCount === 0) {
+        return reply.code(404).send({ message: "Customer not found" });
+      }
+
+      const customerId = customerRes.rows[0].id;
+
+      // 4. Create new sale with subtotal as total_amount
+      const newSaleRes = await pool.query(
+        `INSERT INTO sales (uuid, customer_id, total_amount, date, created_at, updated_at)
+         VALUES ($1, $2, $3, NOW(),  NOW(), NOW())
+         RETURNING id`,
+        ["sale-" + uuidv4(), customerId, subtotal]
+      );
+
       saleId = newSaleRes.rows[0].id;
     }
-    // // 1. Get sale_id from sale_uuid
-    // const saleRes = await pool.query(
-    //   `SELECT id FROM sales WHERE uuid = $1 AND deleted_at IS NULL`,
-    //   [sale_uuid]
-    // );
-    // if (saleRes.rowCount === 0) {
-    //   return reply.code(404).send({ message: "Sale not found" });
-    // }
-    // const saleId = saleRes.rows[0].id;
 
-    // 2. Get product_id, price, and current stock from product_uuid
-    const productRes = await pool.query(
-      `SELECT id, name, price, stock FROM products WHERE uuid = $1 AND deleted_at IS NULL`,
-      [product_uuid]
-    );
-    if (productRes.rowCount === 0) {
-      return reply.code(404).send({ message: "Product not found" });
-    }
-
-    const { id: productId, price: unitPrice, stock: currentStock } = productRes.rows[0];
-
-    if (currentStock < quantity) {
-      return reply.code(400).send({ message: "Not enough stock available" });
-    }
-
-    const subtotal = quantity * unitPrice;
-    const itemUuid = uuidv4();
-
-    // 3. Insert into sale_items and return subtotal
+    // 5. Insert sale item
     const insertRes = await pool.query(
       `INSERT INTO sale_items (uuid, sale_id, product_id, quantity, unit_price, subtotal, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, NOW())
@@ -119,17 +130,17 @@ const addItemController = async (req, reply) => {
       [itemUuid, saleId, productId, quantity, unitPrice, subtotal]
     );
 
-    const insertedItem = insertRes.rows[0];
+    // 6. If sale already existed, update its total
+    if (sale_uuid) {
+      await pool.query(
+        `UPDATE sales
+         SET total_amount = total_amount + $1, updated_at = NOW()
+         WHERE id = $2`,
+        [subtotal, saleId]
+      );
+    }
 
-    // 4. Update sale total
-    await pool.query(
-      `UPDATE sales
-       SET total_amount = total_amount + $1, updated_at = NOW()
-       WHERE id = $2`,
-      [subtotal, saleId]
-    );
-
-    // 5. Subtract stock from the product table
+    // 7. Subtract stock
     await pool.query(
       `UPDATE products
        SET stock = stock - $1, updated_at = NOW()
@@ -139,14 +150,13 @@ const addItemController = async (req, reply) => {
 
     reply.send({
       message: "Item added successfully",
-      item: insertedItem,
+      item: insertRes.rows[0],
     });
   } catch (err) {
     console.error("Error adding item:", err);
     reply.code(500).send({ message: "Internal server error" });
   }
 };
-
 
 // Update item by UUID and adjust sale total accordingly
 const updateItemController = async (req, reply) => {
@@ -169,7 +179,8 @@ const updateItemController = async (req, reply) => {
     const oldSubtotal = item.quantity * item.unit_price;
 
     const newQuantity = quantity !== undefined ? quantity : item.quantity;
-    const newUnitPrice = unit_price !== undefined ? unit_price : item.unit_price;
+    const newUnitPrice =
+      unit_price !== undefined ? unit_price : item.unit_price;
     const newSubtotal = newQuantity * newUnitPrice;
 
     // Get the current stock of the product
@@ -237,7 +248,9 @@ const softDeleteItemController = async (req, reply) => {
     );
 
     if (itemRes.rowCount === 0) {
-      return reply.code(404).send({ message: "Item not found or already deleted" });
+      return reply
+        .code(404)
+        .send({ message: "Item not found or already deleted" });
     }
 
     const item = itemRes.rows[0];
@@ -265,7 +278,6 @@ const softDeleteItemController = async (req, reply) => {
     reply.code(500).send({ message: "Internal server error" });
   }
 };
-
 
 export {
   getItemController,
