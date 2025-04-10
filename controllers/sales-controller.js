@@ -10,6 +10,7 @@ const getSalesController = async (req, reply) => {
     const result = await pool.query(` SELECT s.*, c.uuid as customer_uuid
         FROM sales s
         JOIN customers c ON c.id = s.customer_id`);
+        console.log(result.rows, "result.rows");
     reply.send(result.rows);
   } catch (err) {
     reply.code(500).send({ message: "Error retrieving sales", error: err });

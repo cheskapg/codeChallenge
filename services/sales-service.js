@@ -63,7 +63,7 @@
             grouped[custId].sales[row.sale_uuid] = {
                 sale_uuid: row.sale_uuid,
                 date: row.sale_date,
-                total_amount: row.total_amount,
+                total_amount: parseFloat(row.total_amount),
                 items: [],
             };
     
@@ -76,8 +76,8 @@
             item_uuid: row.item_uuid,
             product_name: row.product_name,
             quantity: row.quantity,
-            unit_price: row.unit_price,
-            subtotal: row.subtotal,
+            unit_price: parseFloat(row.unit_price),
+            subtotal:parseFloat(row.subtotal),
             product_uuid: row.product_uuid,
             });
         }

@@ -60,8 +60,7 @@ const getSalesByCustomerAndMonthController = async (req, reply) => {
 
 const getCustomerSalesMonthlySummaryController = async (req, reply) => {
   const { year, month } = req.params;
-  const summary = await getCustomerSalesSummaryByMonth(year, month);
-  console.log(summary);
+
   try {
     const summary = await getCustomerSalesSummaryByMonth(year, month);
     console.log(summary);

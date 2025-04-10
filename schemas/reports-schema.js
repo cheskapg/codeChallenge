@@ -68,8 +68,8 @@ const getSalesByCustomerAndMonthOptions = {
             customer_id: { type: "integer" },
             date: { type: "string", format: "date-time" },
             total_amount: {
-              type: "string",
-              pattern: "^[0-9]+(\\.[0-9]{1,2})?$",
+              type: "integer",
+             
             },
             created_at: { type: ["string", "null"], format: "date-time" },
             deleted_at: { type: ["string", "null"], format: "date-time" },

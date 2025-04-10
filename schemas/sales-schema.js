@@ -12,7 +12,7 @@ import {
 const Sales = {
   type: "object",
   properties: {
-    sale_uuid: { type: "string" },
+    uuid: { type: "string" },
     customer_uuid: { type: "string" },
     date: { type: "string", format: "date-time" },
     total_amount: { type: "number" },
