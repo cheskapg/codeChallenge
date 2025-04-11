@@ -1,4 +1,8 @@
 # 🧾 NachoSales API (Fastify + PostgreSQL)
+# NachoSales Management System
+
+View it here! https://nacho-management-sys.vercel.app/view-items
+![NachoSales Dashboard](https://github.com/user-attachments/assets/0486f3b5-c675-436b-b0b4-c327c1fde273)
 
 A lightweight backend built with **Fastify** and **PostgreSQL** to manage sales, customers, products, and reporting. This API supports common CRUD operations for a sales management system and is designed to work with a Next.js frontend (e.g. deployed on Vercel).
 
