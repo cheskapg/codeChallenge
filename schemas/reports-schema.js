@@ -3,6 +3,7 @@
 import {
   getSalesByCustomerAndMonthController,
   getSalesByMonthController,
+  getCustomerSalesMonthlySummaryController
 } from "../controllers/reports-controller.js";
 
 const getSalesByMonthOptions = {
@@ -114,7 +115,7 @@ const getSalesByCustomerAndMonthOptions = {
       },
     },
   },
-  handler: getSalesByCustomerAndMonthController,
+  handler: getCustomerSalesMonthlySummaryController,
 };
 
 export { getSalesByMonthOptions, getSalesByCustomerAndMonthOptions };

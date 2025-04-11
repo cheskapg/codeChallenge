@@ -34,7 +34,7 @@ const getSalesByMonthController = async (req, reply) => {
 
 // (Optional) Get sales for a specific customer in a given month
 const getSalesByCustomerAndMonthController = async (req, reply) => {
-  const { customer_id, year, month } = req.params;
+  const { customer_id: customer_uuid, year, month } = req.params;
 
   try {
     const result = await pool.query(
@@ -43,7 +43,7 @@ const getSalesByCustomerAndMonthController = async (req, reply) => {
            AND EXTRACT(YEAR FROM date) = $2
            AND EXTRACT(MONTH FROM date) = $3
            AND deleted_at IS NULL`,
-      [customer_id, year, month]
+      [customer_uuid, year, month]
     );
 
     if (result.rows.length === 0) {
@@ -60,7 +60,8 @@ const getSalesByCustomerAndMonthController = async (req, reply) => {
 
 const getCustomerSalesMonthlySummaryController = async (req, reply) => {
   const { year, month } = req.params;
-
+  const summary = await getCustomerSalesSummaryByMonth(year, month);
+  console.log(summary);
   try {
     const summary = await getCustomerSalesSummaryByMonth(year, month);
     console.log(summary);
