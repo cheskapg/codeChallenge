@@ -29,7 +29,7 @@ A lightweight backend built with **Fastify** and **PostgreSQL** to manage sales,
 
 ### 1. Create the Database
 
-```bash
+
 createdb -U postgres nachosales
 Or via psql:
 
