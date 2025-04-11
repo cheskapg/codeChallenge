@@ -10,7 +10,7 @@ function itemRoutes(fastify, options, done) {
   // Get all items
   fastify.get("/items", {
     ...getItemsOptions,
-    preHandler: fastify.authenticate // Add the preHandler here
+    // preHandler: fastify.authenticate // Add the preHandler here
   });
   // Get item by UUID
   fastify.get("/items/:uuid", getItemOptions);
