@@ -8,7 +8,7 @@ function reportsRoutes(fastify, options, done) {
     //get sales by month
     fastify.get("/reports/month/:year/:month", getSalesByMonthOptions);
 
-    fastify.get("/reports/month/:year/:month/:customer_id", getCustomerSalesMonthlySummaryController);
+    fastify.get("/reports/month/:year/:month/:customer_id", getSalesByCustomerAndMonthOptions);
 
   
     done();

@@ -3,6 +3,8 @@
 import cors from "@fastify/cors";
 // import { createServer } from "http";
 import Fastify from "fastify";
+import fastifyJwt from "@fastify/jwt";
+import bcrypt from "bcrypt"
 import itemRoutes from "./routes/items-routes.js";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
@@ -10,6 +12,8 @@ import customerRoutes from "./routes/customers-routes.js";
 import salesRoutes from "./routes/sales-routes.js";
 import productRoutes from "./routes/products-routes.js";
 import reportsRoutes from "./routes/reports-routes.js";
+import auth from "./plugins/auth.js";
+import userRoutes from "./routes/user.js";
 const PORT = process.env.PORT || 3000;
 const fastify = Fastify();
 await fastify.register(cors, {
@@ -23,36 +27,65 @@ await fastify.register(cors, {
     ],
   })
 const swaggerOptions = {
-  openapi: {
-    openapi: "3.0.0",
-    info: {
-      title: "🧀 Nacho-Sales API",
-      description:
-        "A tasty Fastify-powered API serving up spicy sales data with extra cheese. 🔥🧀",
-      version: "1.0.0",
-    },
-    servers: [
-      {
-        url: "https://codechallenge-ey20.onrender.com",
-        description: "Deployed Backend Server",
+      swagger: {
+        info: {
+          title: "🧀 Nacho-Sales API",
+          description:
+            "A tasty Fastify-powered API serving up spicy sales data with extra cheese. 🔥🧀",
+          version: "1.0.0",
+        
+        },
+        servers: [
+          {
+            url: 'https://codechallenge-ey20.onrender.com',
+            description: 'Deployed Backend Server',
+          },
+        ],
+        securityDefinitions: {
+          bearerAuth: {
+            type: 'apiKey',
+            name: 'Authorization',
+            in: 'header',
+            description: 'Enter JWT token with Bearer prefix, e.g. "Bearer abcde12345"',
+          },
+        },
       },
-    ],
-  },
-};
+    };
+  
+
 
 const swaggerUiOptions = {
-  routePrefix: "/docs",
+  routePrefix: '/docs',
   exposeRoute: true,
+  uiConfig: {
+    docExpansion: 'list',
+    deepLinking: false,
+  },
+  uiHooks: {
+    onRequest: (request, reply, next) => next(),
+    preHandler: (request, reply, next) => next(),
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
+
 };
 
 // Register plugins
 await fastify.register(fastifySwagger, swaggerOptions); // register the swagger plugin
 await fastify.register(fastifySwaggerUI, swaggerUiOptions);
+fastify.register(fastifyJwt, { secret: 'supersecret' });
+await fastify.register(auth);
+await fastify.register(userRoutes); //
 await fastify.register(itemRoutes); //
 await fastify.register(customerRoutes); //
 await fastify.register(salesRoutes); //
 await fastify.register(productRoutes); //
 await fastify.register(reportsRoutes); //
+
+// Register bcrypt
+await fastify.decorate('bcrypt', bcrypt);
+
+// Register plugins
 
 // fastify.get("/", async (req, reply) => {
 //   return { hello: "esm world" };
