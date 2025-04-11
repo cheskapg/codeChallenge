@@ -27,7 +27,9 @@ const getItemsController = async (req, reply) => {
     if (items.length === 0) {
       return reply.code(200).send([]); // preferred, consistent type
     }
-    reply.send(items);
+    // reply.send(items);
+    reply.send(items)
+
   } catch (err) {
     console.error("Error fetching items:", err);
     reply.code(500).send({ message: "Internal server error" });

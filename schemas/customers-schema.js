@@ -29,6 +29,7 @@ const getCustomersOptions = {
     tags: ["Customers"],
     summary: "Get all customers",
     description: "Retrieve all customers in the database",
+    security: [{ bearerAuth: [] }],
     response: {
       200: {
         type: "array",
@@ -51,6 +52,7 @@ const getCustomerOptions = {
         uuid: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Customer,
     },
@@ -74,6 +76,7 @@ const postCustomerOptions = {
         address: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       201: Customer,
     },
@@ -103,6 +106,7 @@ const updateCustomerOptions = {
         address: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Customer,
     },
@@ -123,6 +127,7 @@ const softDeleteCustomerOptions = {
         uuid: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Customer,
     },
@@ -143,7 +148,8 @@ const softDeleteCustomerOptions = {
 //           },
 //         required: ["year", "month"],
 //       },
-//       response: {
+//       security: [{ bearerAuth: [] }],
+// response: {
 //         200: {
 //           type: "array",
 //           items: {
@@ -200,7 +206,7 @@ const softDeleteCustomerOptions = {
 //     },
 //     handler: getCustomerSalesMonthlySummaryController,
 //   };
-  
+
 export {
   getCustomersOptions,
   getCustomerOptions,

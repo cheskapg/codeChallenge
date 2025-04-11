@@ -1,11 +1,12 @@
-import fp from 'fastify-plugin';
+import fp from "fastify-plugin";
 const authPlugin = fp(async (fastify) => {
-
-  fastify.decorate('authenticate', async function (request, reply) {
+  fastify.decorate("authenticate", async function (request, reply) {
     try {
+      console.log("Authenticating request...");
       await request.jwtVerify();
     } catch (err) {
-      reply.code(401).send({ error: 'Unauthorized', message: err.message });
+      console.log("JWT failed", err.message);
+      reply.code(401).send({ error: "Unauthorized", message: err.message });
     }
   });
 });

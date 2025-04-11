@@ -6,7 +6,7 @@ import {
   addSaleController,
   softDeleteSaleController,
   updateSaleController,
-  getCustomerSalesController
+  getCustomerSalesController,
 } from "../controllers/sales-controller.js";
 
 const Sales = {
@@ -27,6 +27,7 @@ const getSalesOptions = {
     tags: ["Sales"],
     summary: "Get all sales",
     description: "Retrieve all sales in the database",
+    security: [{ bearerAuth: [] }],
     response: {
       200: {
         type: "array",
@@ -42,6 +43,7 @@ const getCustomerSalesOptions = {
     tags: ["Sales"],
     summary: "Get all customer sales",
     description: "Retrieve all sales in the database",
+    security: [{ bearerAuth: [] }],
     response: {
       200: {
         type: "array",
@@ -59,6 +61,7 @@ const getSaleOptions = {
     tags: ["Sales"],
     summary: "Get sale by UUID",
     description: "Retrieve a specific sale using its UUID",
+    security: [{ bearerAuth: [] }],
     response: {
       200: Sales,
       // returns a singular object
@@ -81,6 +84,7 @@ const addSaleOptions = {
         total_amount: { type: "number" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       201: Sales,
     },
@@ -108,6 +112,7 @@ const updateSaleOptions = {
         total_amount: { type: "number" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Sales,
     },
@@ -126,6 +131,7 @@ const softDeleteSaleOptions = {
         uuid: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Sales,
     },
@@ -133,10 +139,9 @@ const softDeleteSaleOptions = {
   handler: softDeleteSaleController,
 };
 export {
-  
   getSaleOptions,
   getSalesOptions,
- getCustomerSalesOptions,
+  getCustomerSalesOptions,
   updateSaleOptions,
   addSaleOptions,
   softDeleteSaleOptions,

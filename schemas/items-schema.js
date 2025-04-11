@@ -1,5 +1,6 @@
 // schema validation
 
+import fastify from "fastify";
 import {
   getItemsController,
   getItemController,
@@ -33,6 +34,7 @@ const getItemsOptions = {
     tags: ["Items"],
     summary: "Get all items",
     description: "Retrieve all items in the database",
+    security: [{ bearerAuth: [] }],
     response: {
       200: {
         type: "array",
@@ -57,6 +59,7 @@ const getItemOptions = {
     //     id: { type: 'integer' },
     //   },
     // },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Item,
       // returns a singular object
@@ -66,9 +69,9 @@ const getItemOptions = {
 };
 
 // Options for get item by id
-const postItemOptions = { 
+const postItemOptions = {
   schema: {
-    tags: ['Items'],
+    tags: ["Items"],
     summary: "Add a new item to the sale",
     description: "Add a new item to the sale with product details",
     body: {
@@ -81,12 +84,13 @@ const postItemOptions = {
         customer_uuid: { type: "string" }, // Required quantity
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
-      201: { 
+      201: {
         type: "object", // Define the response structure
         properties: {
           message: { type: "string" },
-          item: { 
+          item: {
             type: "object", // Define the item object properties
             properties: {
               uuid: { type: "string" },
@@ -103,7 +107,6 @@ const postItemOptions = {
   },
   handler: addItemController,
 };
-
 
 // Options for updating an item
 const updateItemOptions = {
@@ -125,6 +128,7 @@ const updateItemOptions = {
         unit_price: { type: "number" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Item, // returns the updated item object
     },
@@ -137,13 +141,15 @@ const softDeleteItemOptions = {
   schema: {
     tags: ["Items"],
     summary: "Soft delete an item",
-    description: "Mark an item as deleted without removing it from the database",
+    description:
+      "Mark an item as deleted without removing it from the database",
     params: {
       type: "object",
       properties: {
         uuid: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Item, // returns the soft-deleted item
     },

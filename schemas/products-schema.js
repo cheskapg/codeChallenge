@@ -27,6 +27,7 @@ const getProductsOptions = {
     tags: ["Products"],
     summary: "Retrieve all products",
     description: "Fetch a list of all available products.",
+    security: [{ bearerAuth: [] }],
     response: {
       200: {
         type: "array",
@@ -48,6 +49,7 @@ const getProductOptions = {
         uuid: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Product,
     },
@@ -71,6 +73,7 @@ const postProductOptions = {
         stock: { type: "integer" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       201: Product,
     },
@@ -99,6 +102,7 @@ const updateProductOptions = {
         stock: { type: "integer" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Product,
     },
@@ -118,6 +122,7 @@ const softDeleteProductOptions = {
         uuid: { type: "string" },
       },
     },
+    security: [{ bearerAuth: [] }],
     response: {
       200: Product,
     },
