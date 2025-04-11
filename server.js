@@ -60,7 +60,7 @@ await fastify.register(reportsRoutes); //
 
 const start = async () => {
   try {
-    await fastify.listen({ port: PORT });
+    fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
     fastify.swagger();
     console.log("Swagger docs available at http://localhost:3000/docs");
     console.log("Server is running on http://localhost:3000");
