@@ -1,8 +1,21 @@
-Here’s the **full `README.md`** for your GitHub repository, including instructions for PostgreSQL setup, Fastify setup, API documentation using Swagger, and more:
+# 🧾 NachoSales API (Fastify + PostgreSQL)
+
+A lightweight backend built with **Fastify** and **PostgreSQL** to manage sales, customers, products, and reporting. This API supports common CRUD operations for a sales management system and is designed to work with a Next.js frontend (e.g. deployed on Vercel).
 
 ---
 
-```markdown
+## 📚 Features
+
+- 🔁 RESTful API with Fastify
+- 🧠 PostgreSQL for structured data
+- ♻️ Soft deletes for all entities
+- 📆 Monthly sales report endpoint
+- 🌐 Ready for frontend consumption (Next.js or any SPA)
+
+---
+
+## 🚀 Getting Started
+
 # Fastify Backend with PostgreSQL and Swagger Docs
 
 ## Introduction
