@@ -33,8 +33,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
-        description: "Local dev server",
+        url: "https://codechallenge-ey20.onrender.com",
+        description: "Deployed Backend Server",
       },
     ],
   },
