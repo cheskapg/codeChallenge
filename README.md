@@ -2,6 +2,11 @@
 
 # ✨ **[Click me and view it live here!](https://nacho-management-sys.vercel.app/dashboard)** 
 
+## 📚 API Documentation
+
+📖 You can explore the full API via **Swagger UI** here:  
+**[View Swagger Docs](https://codechallenge-ey20.onrender.com/docs)**
+
 ## Heads up!
 ###  If the data doesn’t load right away, try refreshing the page.the backend is hosted on **Render**, and it may go idle after 15 minutes of inactivity (free tier things 💸).
 ### thanks - chz 🧀 
