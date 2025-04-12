@@ -3,7 +3,7 @@
 
 **View it here 👉 [Nacho Management System Dashboard](https://nacho-management-sys.vercel.app/dashboard)**
 
-#🧀 _Note:_ If the data fails to load, please refresh the page. The backend is hosted on **Render**, and free-tier deployments go idle after 15 minutes of inactivity.
+# 🧀 _Note:_ If the data fails to load, please refresh the page. The backend is hosted on **Render**, and free-tier deployments go idle after 15 minutes of inactivity.
 ![NachoSales Dashboard](https://github.com/user-attachments/assets/0486f3b5-c675-436b-b0b4-c327c1fde273)
 ![image](https://github.com/user-attachments/assets/ee8d5cf5-fe9c-4440-a7ec-ca283094496f)
 
