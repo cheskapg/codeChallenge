@@ -1,9 +1,11 @@
 # 🧾 NachoSales API (Fastify + PostgreSQL)
 # NachoSales Management System
 
-**View it here 👉 [Nacho Management System Dashboard](https://nacho-management-sys.vercel.app/dashboard)**
+# ✨ **[View it live here!](https://nacho-management-sys.vercel.app/dashboard)** 
 
-# Note: If the data fails to load, please refresh the page. The backend is hosted on **Render**, and free-tier deployments go idle after 15 minutes of inactivity. thanks - chz 🧀 
+> 🧀 _Heads up!_ If the data doesn’t load right away, try refreshing the page.  
+> The backend is hosted on **Render**, and it may go idle after 15 minutes of inactivity (free tier things 💸).
+> thanks - chz 🧀 
 ![NachoSales Dashboard](https://github.com/user-attachments/assets/0486f3b5-c675-436b-b0b4-c327c1fde273)
 ![image](https://github.com/user-attachments/assets/ee8d5cf5-fe9c-4440-a7ec-ca283094496f)
 
